@@ -1,6 +1,11 @@
 // Importa as classes necessárias
 import java.awt.*;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -9,9 +14,15 @@ import javax.swing.text.MaskFormatter;
 public class SistemaGestaoProjetos {
     // Atributos principais da clase SistemaGestaoProjetos
     // Listas globais (estáticas) que armazenam os cadastros efetuados durante a execução do sistema
-    private static List<Usuario> usuarios = new ArrayList<>();
-    private static List<Projeto> projetos = new ArrayList<>();
-    private static List<Equipe> equipes = new ArrayList<>();
+    private static final List<Usuario> usuarios = new ArrayList<>();
+    private static final List<Projeto> projetos = new ArrayList<>();
+    private static final List<Equipe> equipes = new ArrayList<>();
+    private static final DateTimeFormatter FORMATADOR_DATA = new DateTimeFormatterBuilder()
+            .appendPattern("dd/MM/yyyy")
+            .parseDefaulting(ChronoField.ERA, 1) // Define a era padrão para evitar problemas de análise
+            .toFormatter(Locale.of("pt", "BR")) // Usa a localidade do Brasil para garantir o formato dd/MM/yyyy
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final int NUMERO_DIGITOS_CPF = 11;
 
     public static void main(String[] args) {
         // Variável que guarda a opção escolhida pelo usuário no menu
@@ -21,22 +32,23 @@ public class SistemaGestaoProjetos {
             try {
                 // Exibição do menu de opções
                 String input = JOptionPane.showInputDialog(null,
-                        "-> Cadastros\n" +
-                                "      1. Usuário\n" +
-                                "      2. Projeto\n" +
-                                "      3. Equipe\n" +
-                                "____________________________________\n" +
-                                "-> Consultas\n" +
-                                "      4. Usuários\n" +
-                                "      5. Projetos\n" +
-                                "      6. Equipes\n" +
-                                "____________________________________\n" +
-                                "-> Finalizar\n" +
-                                "      0. para sair\n" +
-                                "____________________________________\n" +
-                                "Escolha a opção desejada:",
+                        """
+                                -> Cadastros
+                                      1. Usuário
+                                      2. Projeto
+                                      3. Equipe
+                                ____________________________________
+                                -> Consultas
+                                      4. Usuários
+                                      5. Projetos
+                                      6. Equipes
+                                ____________________________________
+                                -> Finalizar
+                                      0. para sair
+                                ____________________________________
+                                Escolha a opção desejada:""",
                         "Sistema de Gestão de Projetos",
-                        JOptionPane.DEFAULT_OPTION);
+                        JOptionPane.PLAIN_MESSAGE);
                 if (input == null) break; // Caso feche a janela
                 opcao = Integer.parseInt(input);
 
@@ -55,7 +67,7 @@ public class SistemaGestaoProjetos {
                         break;
                     case 4:
                         // Consulta de usuário
-                        if (usuarios.size() > 0) {
+                        if (!usuarios.isEmpty()) {
                             JOptionPane.showMessageDialog(null, usuarios.toString());
                         }
                         else {
@@ -64,7 +76,7 @@ public class SistemaGestaoProjetos {
                         break;
                     case 5:
                         // Consulta de projeto
-                        if (projetos.size() > 0) {
+                        if (!projetos.isEmpty()) {
                             JOptionPane.showMessageDialog(null, projetos.toString());
                         }
                         else {
@@ -73,7 +85,7 @@ public class SistemaGestaoProjetos {
                         break;
                     case 6:
                         // Consulta de equipe
-                        if (equipes.size() > 0) {
+                        if (!equipes.isEmpty()) {
                             JOptionPane.showMessageDialog(null, equipes.toString());
                         }
                         else {
@@ -128,7 +140,7 @@ public class SistemaGestaoProjetos {
         panel.add(nomeTextField, gbc);
 
         gbc.gridy = 1;
-        MaskFormatter mascaraCpf = null;
+        MaskFormatter mascaraCpf;
         mascaraCpf = new MaskFormatter("#########-##");
         mascaraCpf.setPlaceholderCharacter('_');
         JFormattedTextField jFormattedTextCpf = new JFormattedTextField(mascaraCpf);
@@ -151,6 +163,7 @@ public class SistemaGestaoProjetos {
         panel.add(senhaTextField, gbc);
 
         gbc.gridy = 6;
+
         String[] perfis = new String[] {"", "Administrador", "Gerente", "Colaborador"};
         JComboBox<String> listaPerfis = new JComboBox<>(perfis);
         panel.add(listaPerfis, gbc);
@@ -170,7 +183,7 @@ public class SistemaGestaoProjetos {
                 String cargo = cargoTextField.getText();
                 String login = loginTextField.getText();
                 String senha = senhaTextField.getText();
-                String perfil = listaPerfis.getSelectedItem().toString();
+                String perfil = Objects.requireNonNull(listaPerfis.getSelectedItem()).toString();
 
                 // Verificando se os campos foram preenchidos
                 if (nome.isEmpty()) {
@@ -195,12 +208,18 @@ public class SistemaGestaoProjetos {
                     JOptionPane.showMessageDialog(null, "O perfil é obrigatório");
                 }
                 else {
-                    // Inserindo o usuário
-                    usuarios.add(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
+                    //Validando o CPF
+                    if (CpfValido(cpf)) {
+                        // Inserindo o usuário
+                        usuarios.add(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
 
-                    JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+                        JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
 
-                    mostrarPainel = false;
+                        mostrarPainel = false;
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "O CPF informado é inválido!");
+                    }
                 }
             }
             else  {
@@ -249,14 +268,14 @@ public class SistemaGestaoProjetos {
         panel.add(decricaoTextField, gbc);
 
         gbc.gridy = 2;
-        MaskFormatter mascaraDataInicio = null;
+        MaskFormatter mascaraDataInicio;
         mascaraDataInicio = new MaskFormatter("##/##/####");
         mascaraDataInicio.setPlaceholderCharacter('_');
         JFormattedTextField jFormattedTextDataInicio = new JFormattedTextField(mascaraDataInicio);
         panel.add(jFormattedTextDataInicio, gbc);
 
         gbc.gridy = 3;
-        MaskFormatter mascaraDataTermino = null;
+        MaskFormatter mascaraDataTermino;
         mascaraDataTermino = new MaskFormatter("##/##/####");
         mascaraDataTermino.setPlaceholderCharacter('_');
         JFormattedTextField jFormattedTextDataTermino = new JFormattedTextField(mascaraDataTermino);
@@ -293,8 +312,8 @@ public class SistemaGestaoProjetos {
                 String descricao = decricaoTextField.getText();
                 String dataInicio = jFormattedTextDataInicio.getText();
                 String dataTermino = jFormattedTextDataTermino.getText();
-                String statusSelecionado = listaStatus.getSelectedItem().toString();
-                String nomeGerente = listaGerentes.getSelectedItem().toString();
+                String statusSelecionado = Objects.requireNonNull(listaStatus.getSelectedItem()).toString();
+                String nomeGerente = Objects.requireNonNull(listaGerentes.getSelectedItem()).toString();
 
                 // Verificando se os campos foram preenchidos
                 if (nome.isEmpty()) {
@@ -316,17 +335,23 @@ public class SistemaGestaoProjetos {
                     JOptionPane.showMessageDialog(null, "O nome do gerente responsável é obrigatório");
                 }
                 else {
-                    Usuario gerente = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(nomeGerente)).findFirst().orElse(null);
+                    //Validando a data de início e data de término prevista
+                    if (ValidarData(dataInicio) && ValidarData(dataTermino)) {
+                        Usuario gerente = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(nomeGerente)).findFirst().orElse(null);
 
-                    if (gerente != null && gerente.getPerfil().equalsIgnoreCase("gerente")) {
-                        // Inserindo o projeto
-                        projetos.add(new Projeto(nome, descricao, dataInicio, dataTermino, statusSelecionado, gerente));
+                        if (gerente != null && gerente.getPerfil().equalsIgnoreCase("gerente")) {
+                            // Inserindo o projeto
+                            projetos.add(new Projeto(nome, descricao, dataInicio, dataTermino, statusSelecionado, gerente));
 
-                        JOptionPane.showMessageDialog(null, "Projeto cadastrado com sucesso!");
+                            JOptionPane.showMessageDialog(null, "Projeto cadastrado com sucesso!");
 
-                        mostrarPainel = false;
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Gerente inválido! Cadastre ou selecione um usuário com perfil de GERENTE.");
+                            mostrarPainel = false;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Gerente inválido! Cadastre ou selecione um usuário com perfil de GERENTE.");
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "A data informada é inválida");
                     }
                 }
             }
@@ -337,7 +362,7 @@ public class SistemaGestaoProjetos {
     }
 
     // Cadastro de equipe
-    private static void CadastrarEquipe(){
+    private static void CadastrarEquipe() {
         // Declação do JPanel a ser exibido (formulário de cadastro)
         JPanel panel = new JPanel(new GridBagLayout());
 
@@ -398,13 +423,13 @@ public class SistemaGestaoProjetos {
                 //Atribuindo os valores
                 String nome = nomeTextField.getText();
                 String descricao = descricaoTextField.getText();
-                String membroEquipe = listaUsuarios.getSelectedItem().toString();
-                String projeto = listaProjetos.getSelectedItem().toString();
+                String membroEquipe = Objects.requireNonNull(listaUsuarios.getSelectedItem()).toString();
+                String projeto = Objects.requireNonNull(listaProjetos.getSelectedItem()).toString();
 
                 ArrayList<Projeto> projetoSelecionado = new ArrayList<>();
-                for (int i = 0; i < projetos.size(); i++) {
-                    if (projetos.get(i).getNome().equals(projeto)) {
-                        projetoSelecionado.add(projetos.get(i));
+                for (Projeto value : projetos) {
+                    if (value.getNome().equals(projeto)) {
+                        projetoSelecionado.add(value);
                     }
                 }
 
@@ -446,6 +471,71 @@ public class SistemaGestaoProjetos {
             else  {
                 mostrarPainel = false;
             }
+        }
+    }
+
+    // Método para validar se o CPF informado é válido
+    public static boolean CpfValido(String cpf) {
+        if (cpf == null || cpf.length() < NUMERO_DIGITOS_CPF) {
+            return false;
+        }
+
+        // Remove caracteres não numéricos
+        cpf = cpf.replaceAll("[^0-9]", "");
+
+        // Verifica se o CPF tem 11 dígitos
+        if (cpf.length() != NUMERO_DIGITOS_CPF) {
+            return false;
+        }
+
+        // Verifica CPFs com todos os dígitos iguais (ex: 111.111.111-11)
+        if (cpf.matches("(\\d)\\1{10}")) {
+            return false;
+        }
+
+        try {
+            // Calcula e valida o primeiro dígito verificador
+            int digito1 = calcularDigito(cpf.substring(0, 9));
+            if (digito1 != Character.getNumericValue(cpf.charAt(9))) {
+                return false;
+            }
+
+            // Calcula e valida o segundo dígito verificador
+            int digito2 = calcularDigito(cpf.substring(0, 10));
+            if (digito2 != Character.getNumericValue(cpf.charAt(10))) {
+                return false;
+            }
+
+            return true;
+        } catch (NumberFormatException e) {
+            // Caso a string não seja um número válido
+            return false;
+        }
+    }
+
+    // Método que calcula o dígito do CPF
+    private static int calcularDigito(String str) {
+        int soma = 0;
+        int peso = str.length() + 1;
+        for (char c : str.toCharArray()) {
+            soma += Character.getNumericValue(c) * peso;
+            peso--;
+        }
+
+        int digito = 11 - (soma % 11);
+        return (digito == 10 || digito == 11) ? 0 : digito;
+    }
+
+    // Método para validar se uma data está no formato válido
+    public static boolean ValidarData(String data) {
+        if (data == null || data.isEmpty()) {
+            return false;
+        }
+        try {
+            FORMATADOR_DATA.parse(data);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
