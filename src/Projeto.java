@@ -1,11 +1,11 @@
 class Projeto {
     // Atributos principais da clase Projeto
-    private String nome;                // Nome do projeto
-    private String descricao;           // Descrição do projeto
-    private String dataInicio;          // Data de início do projeto
-    private String dataTerminoPrevista; // Data de término prevista do projeto
-    private String status;              // Status do projeto (aceitando os valores planejado, em andamento, concluído, cancelado)
-    private Usuario gerenteResponsavel; // Nome do gerente responsável (objetos do tipo Usuario)
+    private final String nome;                // Nome do projeto
+    private final String descricao;           // Descrição do projeto
+    private final String dataInicio;          // Data de início do projeto
+    private final String dataTerminoPrevista; // Data de término prevista do projeto
+    private final String status;              // Status do projeto (aceitando os valores planejado, em andamento, concluído, cancelado)
+    private final Usuario gerenteResponsavel; // Nome do gerente responsável (objetos do tipo Usuario)
 
     // Construtor da classe
     public Projeto(String nome, String descricao, String dataInicio, String dataTerminoPrevista, String status, Usuario gerenteResponsavel) {
