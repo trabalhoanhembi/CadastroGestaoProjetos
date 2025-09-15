@@ -1,61 +1,50 @@
 // Importa as classes necessárias
-// ArrayList: lista dinâmica para armazenar os membros da equipe
-// List: interface que o ArrayList implementa
 import java.util.ArrayList;
 import java.util.List;
 
-public class Equipe {
-    // Atributos privados da classe Equipe
+class Equipe {
+    // Atributos principais da clase Equipe
     private String nome;                // Nome da equipe
-    private String descricao;           // Breve descrição da equipe
+    private String descricao;           // Descrição da equipe
     private List<Usuario> membros;      // Lista de membros da equipe (objetos do tipo Usuario)
+    private List<Projeto> projetos;     // Lista de projetos da equipe (objetos do tipo Projeto)
 
-    // Construtor da classe Equipe
-    // Ao criar uma equipe, já definimos o nome e a descrição
-    public Equipe(String nome, String descricao) {
-        this.nome = nome;                     // Inicializa o nome da equipe
-        this.descricao = descricao;           // Inicializa a descrição da equipe
-        this.membros = new ArrayList<>();     // Cria uma lista vazia de membros
+    // Construtor da classe
+    public Equipe(String nome, String descricao, Usuario membro, ArrayList<Projeto> projeto) {
+        this.nome = nome;                   // Inicializa com o nome da equipe
+        this.descricao = descricao;         // Inicializa com a descrição da equipe
+        this.membros = new ArrayList<>();   // Cria uma lista vazia de membro/usuário
+        adicionarMembro(membro);            // Inicializa/adiciona o membro/usuário
+        this.projetos = new ArrayList<>();  // Cria uma lista vazia de projetos
+        alocarProjeto(projeto);             // Inicializa/adiciona/aloca o projeto
     }
 
-    // Método para adicionar um usuário à equipe
+    // Método para adicionar um membro/usuário a equipe
     public void adicionarMembro(Usuario usuario) {
-        membros.add(usuario); // Adiciona o usuário recebido na lista de membros
+        assert membros != null;
+        membros.add(usuario);
     }
 
-    // Métodos getters e setters
-    // Permitem acessar e modificar os atributos da equipe de forma controlada
-
-    public String getNome() {
-        return nome; // Retorna o nome da equipe
+    // Método para adicionar/alocar umprojeto a equipe
+    public void alocarProjeto(ArrayList<Projeto> projeto) {
+        assert projetos != null;
+        projetos.add(projeto.get(0));
     }
 
-    public void setNome(String nome) {
-        this.nome = nome; // Atualiza o nome da equipe
-    }
-
-    public String getDescricao() {
-        return descricao; // Retorna a descrição da equipe
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao; // Atualiza a descrição da equipe
-    }
-
-    public List<Usuario> getMembros() {
-        return membros; // Retorna a lista de membros da equipe
-    }
-
-    public void setMembros(List<Usuario> membros) {
-        this.membros = membros; // Atualiza a lista inteira de membros
-    }
+    //Getters, permitem acessar os atributos da equipe
+    public String getNome() { return nome; }
+    public String getDescricao() { return descricao; }
+    public String getMembros() { return membros.toString(); }
+    public String getProjetos() { return projetos.toString(); }
 
     // Sobrescreve o método toString()
     // É chamado automaticamente quando o objeto Equipe é impresso
     @Override
     public String toString() {
-        return "Equipe: " + nome +
-                ", Descrição: " + descricao +
-                ", Membros: " + membros; // Aqui ele chama o toString() de cada usuário
+        return "\n"
+                + "Nome da equipe: " + getNome() + "\n"
+                + "Descrição: " + getDescricao() + "\n"
+                + "Membros: " + getMembros() + "\n"
+                + "Projetos: " + getProjetos() + "\n";
     }
 }
