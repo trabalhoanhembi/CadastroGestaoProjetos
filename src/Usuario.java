@@ -1,18 +1,14 @@
-// Importações necessárias
-// java.util não é usado aqui, então não precisamos importar nada além do básico
-public class Usuario {
+class Usuario {
+    // Atributos principais da clase Usuario
+    private String nomeCompleto;    // Nome completo do usuário
+    private String cpf;             // Número do CPF do usuário
+    private String email;           // E-mail do usuário
+    private String cargo;           // Cargo do usuário
+    private String login;           // Login do usuário
+    private String senha;           // Senha do usuário
+    private String perfil;          // Perfil do projeto (aceitando os valores administrador, gerente ou colaborador)
 
-    // Atributos do usuário
-    private String nomeCompleto;
-    private String cpf;
-    private String email;
-    private String cargo;
-    private String login;
-    private String senha;
-    private String perfil; // pode ser "administrador", "gerente" ou "colaborador"
-
-    // Construtor da classe Usuario
-    // Recebe todos os dados necessários para criar um novo objeto Usuario
+    // Construtor da classe
     public Usuario(String nomeCompleto, String cpf, String email, String cargo, String login, String senha, String perfil) {
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
@@ -23,47 +19,26 @@ public class Usuario {
         this.perfil = perfil;
     }
 
-    // Métodos getters (apenas leitura dos atributos)
-    public String getNomeCompleto() {
-        return nomeCompleto;
-    }
+    //Getters, permitem acessar os atributos do usuario
+    public String getNomeCompleto() { return nomeCompleto; }
+    public String getCpf() { return cpf; }
+    public String getEmail() { return email; }
+    public String getCargo() { return cargo; }
+    public String getLogin() { return login; }
+    public String getSenha() { return senha; }
+    public String getPerfil() { return perfil; }
 
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public String getPerfil() {
-        return perfil;
-    }
-
-    // Método toString sobrescrito
-    // Retorna uma representação em texto do objeto Usuario
-    // Isso facilita quando usamos usuarios.toString() em JOptionPane ou console
+    // Sobrescreve o método toString()
+    // É chamado automaticamente quando o objeto Usuario é impresso
     @Override
     public String toString() {
-        return "Usuário {" +
-                "Nome='" + nomeCompleto + '\'' +
-                ", CPF='" + cpf + '\'' +
-                ", Email='" + email + '\'' +
-                ", Cargo='" + cargo + '\'' +
-                ", Login='" + login + '\'' +
-                ", Perfil='" + perfil + '\'' +
-                '}';
+        return "\n"
+                + "Nome completo: " + getNomeCompleto() + "\n"
+                + "CPF: " + getCpf() + "\n"
+                + "E-mail: " + getEmail() + "\n"
+                + "Cargo: " + getCargo() + "\n"
+                + "Login: " + getLogin() + "\n"
+                + "Senha: " + getSenha() + "\n"
+                + "Perfil: " + getPerfil() + "\n";
     }
 }
