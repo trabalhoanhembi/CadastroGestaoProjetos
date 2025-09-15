@@ -5,7 +5,6 @@ O **CadastroGestaoProjetos** é um sistema desenvolvido em **Java** para gerenci
 
 - Cadastro e manutenção de usuários do sistema (administrador, gerente, colaborador);
 - Cadastro de projetos com informações como nome, descrição, datas de início e término, status e gerente responsável;
-- Cadastro de tarefas dentro dos projetos, com controle de status e prazos;
 - Criação e gerenciamento de equipes, incluindo alocação de membros e projetos;
 - Emissão de relatórios simples de acompanhamento de projetos.
 
@@ -19,7 +18,6 @@ CadastroGestaoProjetos/
 ├─ src/ # Código-fonte em Java
 │ ├─ Usuario.java
 │ ├─ Projeto.java
-│ ├─ Tarefa.java
 │ ├─ Equipe.java
 │ └─ SistemaGestaoProjetos.java
 ├─ README.md # Arquivo de apresentação do projeto
@@ -36,16 +34,12 @@ CadastroGestaoProjetos/
    - Perfil: administrador, gerente ou colaborador
 
 2. **Cadastro de Projetos**
-   - Nome do projeto, descrição, datas, status
-   - Cada projeto possui um gerente responsável
-   - Permite adicionar tarefas ao projeto
+   - Nome do projeto, descrição, data de início, data de término prevista
+   - Status: planejado, em andamento, concluído, cancelado
+   - Gerente responsável
 
-3. **Cadastro de Tarefas**
-   - Nome, descrição, datas de início e término
-   - Status (planejada, em andamento, concluída)
-
-4. **Cadastro de Equipes**
-   - Nome da equipe, descrição e membros
+3. **Cadastro de Equipes**
+   - Nome da equipe, descrição, membros e projetos
    - Equipes podem atuar em vários projetos
 
 ---
@@ -55,7 +49,7 @@ CadastroGestaoProjetos/
 - Linguagem: **Java**
 - Estrutura: **POO (Programação Orientada a Objetos)**
 - Gerenciamento de versões: **Git e GitHub**
-- Interface simples via **JOptionPane** para cadastro de usuários
+- Interface simples via **JOptionPane, JPanel, JLabel e JTextField** para cadastro de usuários
 
 ---
 
