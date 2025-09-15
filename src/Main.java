@@ -140,7 +140,7 @@ public class Main {
 
         gbc.gridy = 1;
         MaskFormatter mascaraCpf;
-        mascaraCpf = new MaskFormatter("#########-##");
+        mascaraCpf = new MaskFormatter("###.###.###-##");
         mascaraCpf.setPlaceholderCharacter('_');
         JFormattedTextField jFormattedTextCpf = new JFormattedTextField(mascaraCpf);
         panel.add(jFormattedTextCpf, gbc);
@@ -188,7 +188,7 @@ public class Main {
                 if (nome.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "O nome é obrigatório");
                 }
-                else if (cpf.isEmpty() || cpf.equals("_________-__")) {
+                else if (cpf.isEmpty() || || cpf.equals("___.___.___-__")) {
                     JOptionPane.showMessageDialog(null, "O CPF é obrigatório");
                 }
                 else if (email.isEmpty()) {
