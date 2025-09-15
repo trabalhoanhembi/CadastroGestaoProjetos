@@ -67,7 +67,7 @@ public class Main {
                     case 4:
                         // Consulta de usuário
                         if (!usuarios.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, usuarios.toString());
+                            JOptionPane.showMessageDialog(null, usuarios.toString().replace("[", "").replace("]", ""));
                         }
                         else {
                             JOptionPane.showMessageDialog(null, "Não existe nenhum usuário cadastrado.");
@@ -76,7 +76,7 @@ public class Main {
                     case 5:
                         // Consulta de projeto
                         if (!projetos.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, projetos.toString());
+                            JOptionPane.showMessageDialog(null, projetos.toString().replace("[", "").replace("]", ""));
                         }
                         else {
                             JOptionPane.showMessageDialog(null, "Não existe nenhum projeto cadastrado.");
@@ -85,7 +85,7 @@ public class Main {
                     case 6:
                         // Consulta de equipe
                         if (!equipes.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, equipes.toString());
+                            JOptionPane.showMessageDialog(null, equipes.toString().replace("[", "").replace("]", ""));
                         }
                         else {
                             JOptionPane.showMessageDialog(null, "Não existe nenhuma equipe cadastrada.");
