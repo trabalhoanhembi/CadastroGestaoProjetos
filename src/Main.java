@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 
-public class SistemaGestaoProjetos {
+public class Main {
     // Atributos principais da clase SistemaGestaoProjetos
     // Listas globais (estáticas) que armazenam os cadastros efetuados durante a execução do sistema
     private static final List<Usuario> usuarios = new ArrayList<>();
@@ -209,12 +209,20 @@ public class SistemaGestaoProjetos {
                 else {
                     //Validando o CPF
                     if (CpfValido(cpf)) {
-                        // Inserindo o usuário
-                        usuarios.add(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
 
-                        JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+                        Usuario verificaCpf = usuarios.stream().filter(u -> u.getCpf().equalsIgnoreCase(cpf)).findFirst().orElse(null);
 
-                        mostrarPainel = false;
+                        if (verificaCpf != null) {
+                            JOptionPane.showMessageDialog(null, "Já existe um usuário cadastrado com este CPF!");
+                        }
+                        else {
+                            // Inserindo o usuário
+                            usuarios.add(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
+
+                            JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+
+                            mostrarPainel = false;
+                        }
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "O CPF informado é inválido!");
