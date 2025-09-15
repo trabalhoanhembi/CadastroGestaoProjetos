@@ -1,12 +1,12 @@
 class Usuario {
     // Atributos principais da clase Usuario
-    private String nomeCompleto;    // Nome completo do usuário
-    private String cpf;             // Número do CPF do usuário
-    private String email;           // E-mail do usuário
-    private String cargo;           // Cargo do usuário
-    private String login;           // Login do usuário
-    private String senha;           // Senha do usuário
-    private String perfil;          // Perfil do projeto (aceitando os valores administrador, gerente ou colaborador)
+    private final String nomeCompleto;    // Nome completo do usuário
+    private final String cpf;             // Número do CPF do usuário
+    private final String email;           // E-mail do usuário
+    private final String cargo;           // Cargo do usuário
+    private final String login;           // Login do usuário
+    private final String senha;           // Senha do usuário
+    private final String perfil;          // Perfil do projeto (aceitando os valores administrador, gerente ou colaborador)
 
     // Construtor da classe
     public Usuario(String nomeCompleto, String cpf, String email, String cargo, String login, String senha, String perfil) {
