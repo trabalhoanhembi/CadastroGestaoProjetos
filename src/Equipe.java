@@ -4,10 +4,10 @@ import java.util.List;
 
 class Equipe {
     // Atributos principais da clase Equipe
-    private String nome;                // Nome da equipe
-    private String descricao;           // Descrição da equipe
-    private List<Usuario> membros;      // Lista de membros da equipe (objetos do tipo Usuario)
-    private List<Projeto> projetos;     // Lista de projetos da equipe (objetos do tipo Projeto)
+    private final String nome;                // Nome da equipe
+    private final String descricao;           // Descrição da equipe
+    private final List<Usuario> membros;      // Lista de membros da equipe (objetos do tipo Usuario)
+    private final List<Projeto> projetos;     // Lista de projetos da equipe (objetos do tipo Projeto)
 
     // Construtor da classe
     public Equipe(String nome, String descricao, Usuario membro, ArrayList<Projeto> projeto) {
@@ -28,7 +28,7 @@ class Equipe {
     // Método para adicionar/alocar umprojeto a equipe
     public void alocarProjeto(ArrayList<Projeto> projeto) {
         assert projetos != null;
-        projetos.add(projeto.get(0));
+        projetos.add(projeto.getFirst());
     }
 
     //Getters, permitem acessar os atributos da equipe
