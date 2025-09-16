@@ -15,6 +15,7 @@ public class Main {
     // Listas globais (estáticas) que armazenam os cadastros efetuados durante a execução do sistema
     private static final List<Usuario> usuarios = new ArrayList<>();
     private static final List<Projeto> projetos = new ArrayList<>();
+    private static final List<Tarefa> tarefas = new ArrayList<>();
     private static final List<Equipe> equipes = new ArrayList<>();
     private static final DateTimeFormatter FORMATADOR_DATA = new DateTimeFormatterBuilder()
             .appendPattern("dd/MM/yyyy")
@@ -36,17 +37,19 @@ public class Main {
                                       1. Usuário
                                       2. Projeto
                                       3. Equipe
+                                      4. Tarefa
                                 ____________________________________
                                 -> Consultas
-                                      4. Usuários
-                                      5. Projetos
-                                      6. Equipes
+                                      5. Usuários
+                                      6. Projetos
+                                      7. Equipes
+                                      8. Tarefas
                                 ____________________________________
                                 -> Finalizar
                                       0. para sair
                                 ____________________________________
                                 Escolha a opção desejada:""",
-                        "Sistema de Gestão de Projetos",
+                        "Sistema de Gestão de Projetos Educacional",
                         JOptionPane.PLAIN_MESSAGE);
                 if (input == null) break; // Caso feche a janela
                 opcao = Integer.parseInt(input);
@@ -65,6 +68,10 @@ public class Main {
                         CadastrarEquipe();
                         break;
                     case 4:
+                        // Cadastro de tarefa
+                        CadastrarTarefa();
+                        break;
+                    case 5:
                         // Consulta de usuário
                         if (!usuarios.isEmpty()) {
                             JOptionPane.showMessageDialog(null, usuarios.toString().replace("[", "").replace("]", ""));
@@ -73,7 +80,7 @@ public class Main {
                             JOptionPane.showMessageDialog(null, "Não existe nenhum usuário cadastrado.");
                         }
                         break;
-                    case 5:
+                    case 6:
                         // Consulta de projeto
                         if (!projetos.isEmpty()) {
                             JOptionPane.showMessageDialog(null, projetos.toString().replace("[", "").replace("]", ""));
@@ -82,13 +89,22 @@ public class Main {
                             JOptionPane.showMessageDialog(null, "Não existe nenhum projeto cadastrado.");
                         }
                         break;
-                    case 6:
+                    case 7:
                         // Consulta de equipe
                         if (!equipes.isEmpty()) {
                             JOptionPane.showMessageDialog(null, equipes.toString().replace("[", "").replace("]", ""));
                         }
                         else {
                             JOptionPane.showMessageDialog(null, "Não existe nenhuma equipe cadastrada.");
+                        }
+                        break;
+                    case 8:
+                        // Consulta de tarefa
+                        if (!tarefas.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, tarefas.toString().replace("[", "").replace("]", ""));
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "Não existe nenhuma tarefa cadastrada.");
                         }
                         break;
                 }
@@ -355,6 +371,145 @@ public class Main {
                             mostrarPainel = false;
                         } else {
                             JOptionPane.showMessageDialog(null, "Gerente inválido! Cadastre ou selecione um usuário com perfil de GERENTE.");
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "A data informada é inválida");
+                    }
+                }
+            }
+            else  {
+                mostrarPainel = false;
+            }
+        }
+    }
+
+    // Cadastro de tarefa
+    private static void CadastrarTarefa() throws ParseException {
+        // Declação do JPanel a ser exibido (formulário de cadastro)
+        JPanel panel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0);
+
+        // Posicionando os labels
+        panel.add(new JLabel("Nome da tarefa:"), gbc);
+
+        gbc.gridy = 1;
+        panel.add(new JLabel("Descrição:"), gbc);
+
+        gbc.gridy = 2;
+        panel.add(new JLabel("Prazo:"), gbc);
+
+        gbc.gridy = 3;
+        panel.add(new JLabel("Status:"), gbc);
+
+        gbc.gridy = 4;
+        panel.add(new JLabel("Responsável:"), gbc);
+
+        gbc.gridy = 5;
+        panel.add(new JLabel("Projeto:"), gbc);
+
+        // Posicionando os campos para digitação
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+
+        JTextField nomeTextField = new JTextField(10);
+        panel.add(nomeTextField, gbc);
+
+        gbc.gridy = 1;
+        JTextField descricaoTextField = new JTextField(10);
+        panel.add(descricaoTextField, gbc);
+
+        gbc.gridy = 2;
+        MaskFormatter mascaraDataPrazo;
+        mascaraDataPrazo = new MaskFormatter("##/##/####");
+        mascaraDataPrazo.setPlaceholderCharacter('_');
+        JFormattedTextField jFormattedTextDataPrazo = new JFormattedTextField(mascaraDataPrazo);
+        panel.add(jFormattedTextDataPrazo, gbc);
+
+        gbc.gridy = 3;
+        String[] status = new String[] {"", "Pendente", "Em andamento", "Concluída"};
+        JComboBox<String> listaStatus = new JComboBox<>(status);
+        panel.add(listaStatus, gbc);
+
+        gbc.gridy = 4;
+        String[] usuariosCadastrados = new String[usuarios.size()+1];
+        usuariosCadastrados[0] = "";
+        for (int i = 0; i < usuarios.size(); i++) {
+            usuariosCadastrados[i+1] = usuarios.get(i).getNomeCompleto();
+        }
+        JComboBox<String> listaUsuarios = new JComboBox<>(usuariosCadastrados);
+        panel.add(listaUsuarios, gbc);
+
+        gbc.gridy = 5;
+        String[] projetosCadastrados = new String[projetos.size()+1];
+        projetosCadastrados[0] = "";
+        for (int i = 0; i < projetos.size(); i++) {
+            projetosCadastrados[i+1] = projetos.get(i).getNome();
+        }
+        JComboBox<String> listaProjetos = new JComboBox<>(projetosCadastrados);
+        panel.add(listaProjetos, gbc);
+
+        // Exibindo o painel
+        boolean mostrarPainel = true;
+
+        while (mostrarPainel) {
+            int reply = JOptionPane.showConfirmDialog(null, panel, "Cadastro de tarefa",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (reply == JOptionPane.OK_OPTION) {
+                //Atribuindo os valores
+                String nome = nomeTextField.getText();
+                String descricao = descricaoTextField.getText();
+                String dataPrazo = jFormattedTextDataPrazo.getText();
+                String statusSelecionado = Objects.requireNonNull(listaStatus.getSelectedItem()).toString();
+                String responsavel = Objects.requireNonNull(listaUsuarios.getSelectedItem()).toString();
+                String projeto = Objects.requireNonNull(listaProjetos.getSelectedItem()).toString();
+
+                ArrayList<Projeto> projetoSelecionado = new ArrayList<>();
+                for (Projeto value : projetos) {
+                    if (value.getNome().equals(projeto)) {
+                        projetoSelecionado.add(value);
+                    }
+                }
+
+                // Verificando se os campos foram preenchidos
+                if (nome.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "O nome da tarefa é obrigatório");
+                }
+                else if (descricao.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "A descricao é obrigatório");
+                }
+                else if (dataPrazo.isEmpty() || dataPrazo.equals("__/__/____")) {
+                    JOptionPane.showMessageDialog(null, "A data do prazo é obrigatório");
+                }
+                else if (statusSelecionado.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "O status é obrigatório");
+                }
+                else if (responsavel.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "O responsável é obrigatório");
+                }
+                else if (projeto.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "O projeto é obrigatório");
+                }
+                else {
+                    //Validando a data do prazo
+                    if (ValidarData(dataPrazo)) {
+                        Usuario membro = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(responsavel)).findFirst().orElse(null);
+
+                        if (membro != null) {
+
+                            // Inserindo a tarefa
+                            tarefas.add(new Tarefa(nome, descricao, membro, dataPrazo, statusSelecionado, projetoSelecionado));
+
+                            JOptionPane.showMessageDialog(null, "Equipe cadastrada com sucesso!");
+
+                            mostrarPainel = false;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Membro da equipe não encontrado! Cadastre este membro como um usuário primeiro.");
                         }
                     }
                     else {
