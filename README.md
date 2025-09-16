@@ -3,10 +3,11 @@
 ## Descrição
 O **CadastroGestaoProjetos** é um sistema desenvolvido em **Java** para gerenciar de forma completa projetos, equipes e usuários dentro de uma organização. Ele permite:
 
-- Cadastro e manutenção de usuários do sistema (administrador, gerente, colaborador);
-- Cadastro de projetos com informações como nome, descrição, datas de início e término, status e gerente responsável;
-- Criação e gerenciamento de equipes, incluindo alocação de membros e projetos;
-- Emissão de relatórios simples de acompanhamento de projetos.
+- Cadastro de usuários com informações como nome, CPF, e-mail, cargo, login, senha e perfil (administrador, gerente, colaborador);
+- Cadastro de projetos com informações como nome, descrição, datas de início, data de término prevista, status (planejado, em andamento, concluído, cancelado) e gerente responsável;
+- Cadastro de equipes com informações como nome, descrição, membros e projeto associado;
+- Cadastro de tarefas com informações como nome, descrição, prazo, status (pendente, em andamento e concluída), responsável e projeto associado;
+- Emissão de relatórios simples (consultas) dos cadastros (usuário, projeto, equipe e tarefa).
 
 O sistema foi desenvolvido como um projeto acadêmico, mas já implementa conceitos de orientação a objetos e boas práticas de organização de código.
 
@@ -19,11 +20,11 @@ CadastroGestaoProjetos/
 │ ├─ Usuario.java
 │ ├─ Projeto.java
 │ ├─ Equipe.java
-│ └─ SistemaGestaoProjetos.java
+│ ├─ Tarefa.java
+│ └─ Main.java
 ├─ README.md # Arquivo de apresentação do projeto
 ├─ .gitignore # Arquivos ignorados pelo Git
 └─ LICENSE # Licença do projeto
-
 
 ---
 
@@ -39,7 +40,11 @@ CadastroGestaoProjetos/
    - Gerente responsável
 
 3. **Cadastro de Equipes**
-   - Nome da equipe, descrição, membros e projetos
+   - Nome da equipe, descrição, membros e projeto associado
+   - Equipes podem atuar em vários projetos
+  
+4. **Cadastro de Tarefas**
+   - Nome da tarefa, descrição, prazo, status, responsável e projeto associado
    - Equipes podem atuar em vários projetos
 
 ---
@@ -61,7 +66,6 @@ git clone https://github.com/trabalhoanhembi/CadastroGestaoProjetos.git
 Entre na pasta do projeto:
 
 cd CadastroGestaoProjetos/src
-
 
 Compile e execute o sistema:
 
