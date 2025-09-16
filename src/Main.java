@@ -310,14 +310,7 @@ public class Main {
         panel.add(listaStatus, gbc);
 
         gbc.gridy = 5;
-        String[] gerentesCadastrados = new String[usuarios.size()+1];
-        gerentesCadastrados[0] = "";
-        for (int i = 0; i < usuarios.size(); i++) {
-            //if (usuarios.get(i).getPerfil().equals("Gerente")) {
-                //gerentesCadastrados[i] = usuarios.get(i).getNomeCompleto();
-            //}
-            gerentesCadastrados[i+1] = usuarios.get(i).getNomeCompleto();
-        }
+        String[] gerentesCadastrados = extrairGerentes(usuarios);
 
         JComboBox<String> listaGerentes = new JComboBox<>(gerentesCadastrados);
         panel.add(listaGerentes, gbc);
@@ -634,6 +627,27 @@ public class Main {
                 mostrarPainel = false;
             }
         }
+    }
+
+    // Extrai/retorna um arrar de string com somente os perfis iguais a "gerente"
+    public static String[] extrairGerentes(List<Usuario> usuarios) {
+        // Usa uma lista para armazenar os nomes dos gerentes
+        List<String> gerentesEncontrados = new ArrayList<>();
+
+        // Adiciona um valor padrão na primeira posição, se necessário
+        gerentesEncontrados.add("");
+
+        // Itera sobre a lista de usuários
+        for (Usuario usuario : usuarios) {
+            // Verifica o perfil do usuário
+            if (usuario.getPerfil().equals("Gerente")) {
+                // Adiciona o nome à lista apenas se o perfil for Gerente
+                gerentesEncontrados.add(usuario.getNomeCompleto());
+            }
+        }
+
+        // Converte a lista para um array e retorna
+        return gerentesEncontrados.toArray(new String[0]);
     }
 
     // Método para validar se o CPF informado é válido
