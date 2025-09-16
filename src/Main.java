@@ -188,7 +188,7 @@ public class Main {
                 if (nome.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "O nome é obrigatório");
                 }
-                else if (cpf.isEmpty() || || cpf.equals("___.___.___-__")) {
+                else if (cpf.isEmpty() || cpf.equals("___.___.___-__")) {
                     JOptionPane.showMessageDialog(null, "O CPF é obrigatório");
                 }
                 else if (email.isEmpty()) {
