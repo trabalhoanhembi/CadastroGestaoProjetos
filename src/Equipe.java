@@ -1,50 +1,81 @@
 // Importa as classes necessárias
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class Equipe {
+class Equipe implements Serializable {
     // Atributos principais da clase Equipe
-    private final String nome;                // Nome da equipe
-    private final String descricao;           // Descrição da equipe
-    private final List<Usuario> membros;      // Lista de membros da equipe (objetos do tipo Usuario)
-    private final List<Projeto> projetos;     // Lista de projetos da equipe (objetos do tipo Projeto)
+    private String nome;        // Nome da equipe
+    private String descricao;   // Descrição da equipe
+    private List<Usuario> membros;  // Lista de membros da equipe (objeto do tipo Usuario)
+    private List<Projeto> projetos; // Lista de projetos da equipe (objeto do tipo Projeto)
 
-    // Construtor da classe
-    public Equipe(String nome, String descricao, Usuario membro, ArrayList<Projeto> projeto) {
-        this.nome = nome;                   // Inicializa com o nome da equipe
-        this.descricao = descricao;         // Inicializa com a descrição da equipe
-        this.membros = new ArrayList<>();   // Cria uma lista vazia de membro/usuário
-        adicionarMembro(membro);            // Inicializa/adiciona o membro/usuário
-        this.projetos = new ArrayList<>();  // Cria uma lista vazia de projetos
-        alocarProjeto(projeto);             // Inicializa/adiciona/aloca o projeto
+    // Construtor Padrão (Sem Argumentos e necessário para serialização)
+    public Equipe() {
+        this.membros = new ArrayList<>();
+        this.projetos = new ArrayList<>();
     }
 
-    // Método para adicionar um membro/usuário a equipe
+    // Construtor principal para inicializar uma equipe
+    public Equipe(String nome, String descricao) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.membros = new ArrayList<>();
+        this.projetos = new ArrayList<>();
+    }
+
+    // Métodos setters para os dados mutáveis
+    public void setNome(String nome) { this.nome = nome; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    // Métodos para adicionar um único item
     public void adicionarMembro(Usuario usuario) {
-        assert membros != null;
-        membros.add(usuario);
+        if (usuario != null) {
+            this.membros.add(usuario);
+        }
     }
 
-    // Método para adicionar/alocar umprojeto a equipe
-    public void alocarProjeto(ArrayList<Projeto> projeto) {
-        assert projetos != null;
-        projetos.add(projeto.getFirst());
+    public void adicionarProjeto(Projeto projeto) {
+        if (projeto != null) {
+            this.projetos.add(projeto);
+        }
     }
 
-    //Getters, permitem acessar os atributos da equipe
+    // Métodos getters para acessar os dados
     public String getNome() { return nome; }
     public String getDescricao() { return descricao; }
-    public String getMembros() { return membros.toString(); }
-    public String getProjetos() { return projetos.toString(); }
+    public List<Usuario> getMembros() { return new ArrayList<>(membros); }
+    public List<Projeto> getProjetos() { return new ArrayList<>(projetos); }
 
-    // Sobrescreve o método toString()
-    // É chamado automaticamente quando o objeto Equipe é impresso
+    // Métodos getters para a exibição de nomes
+    public String getNomesMembros() {
+        StringBuilder nomes = new StringBuilder();
+        for (Usuario membro : membros) {
+            nomes.append(membro.getNome()).append(" | ");
+        }
+        if (!nomes.isEmpty()) {
+            nomes.setLength(nomes.length() - 2); // Remove a vírgula e o espaço finais
+        }
+        return nomes.toString();
+    }
+
+    public String getNomesProjetos() {
+        StringBuilder nomes = new StringBuilder();
+        for (Projeto projeto : projetos) {
+            nomes.append(projeto.getNome()).append(" | ");
+        }
+        if (!nomes.isEmpty()) {
+            nomes.setLength(nomes.length() - 2); // Remove a vírgula e o espaço finais
+        }
+        return nomes.toString();
+    }
+
+    // Sobrescreve o método toString() para mostrar os dados da equipe
     @Override
     public String toString() {
-        return "\n"
-                + "Nome da equipe: " + getNome() + "\n"
+        return "Nome: " + getNome() + "\n"
                 + "Descrição: " + getDescricao() + "\n"
-                + "Membros: " + getMembros() + "\n"
-                + "Projetos: " + getProjetos() + "\n";
+                + "Membro: " + getNomesMembros() + "\n"
+                + "Projeto: " + getNomesProjetos();
     }
 }
