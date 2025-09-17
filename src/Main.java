@@ -13,15 +13,19 @@ import javax.swing.text.MaskFormatter;
 public class Main {
     // Atributos principais da clase SistemaGestaoProjetos
     // Listas globais (estáticas) que armazenam os cadastros efetuados durante a execução do sistema
-    private static final List<Usuario> usuarios = new ArrayList<>();
-    private static final List<Projeto> projetos = new ArrayList<>();
-    private static final List<Tarefa> tarefas = new ArrayList<>();
-    private static final List<Equipe> equipes = new ArrayList<>();
+
+    // As variáveis do tipo List poderão ser populadsa com o que está nos arquivos
+    private static final List<Usuario> usuarios = PersistenciaDados.carregarUsuarios();
+    private static final List<Projeto> projetos = PersistenciaDados.carregarProjetos();
+    private static final List<Tarefa> tarefas = PersistenciaDados.carregarTarefas();
+    private static final List<Equipe> equipes = PersistenciaDados.carregarEquipes();
+
     private static final DateTimeFormatter FORMATADOR_DATA = new DateTimeFormatterBuilder()
             .appendPattern("dd/MM/yyyy")
             .parseDefaulting(ChronoField.ERA, 1) // Define a era padrão para evitar problemas de análise
             .toFormatter(Locale.of("pt", "BR")) // Usa a localidade do Brasil para garantir o formato dd/MM/yyyy
             .withResolverStyle(ResolverStyle.STRICT);
+
     private static final int NUMERO_DIGITOS_CPF = 11;
 
     public static void main(String[] args) {
@@ -45,8 +49,11 @@ public class Main {
                                       7. Equipes
                                       8. Tarefas
                                 ____________________________________
+                                -> Administração
+                                      9. Gerenciar dados (apagar)
+                                ____________________________________
                                 -> Finalizar
-                                      0. para sair
+                                      0. Para sair
                                 ____________________________________
                                 Escolha a opção desejada:""",
                         "Sistema de Gestão de Projetos Educacional",
@@ -73,50 +80,129 @@ public class Main {
                         break;
                     case 5:
                         // Consulta de usuário
-                        if (!usuarios.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, usuarios.toString().replace("[", "").replace("]", ""));
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Não existe nenhum usuário cadastrado.");
-                        }
+                        ConsultarUsuarios();
                         break;
                     case 6:
                         // Consulta de projeto
-                        if (!projetos.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, projetos.toString().replace("[", "").replace("]", ""));
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Não existe nenhum projeto cadastrado.");
-                        }
+                        ConsultarProjetos();
                         break;
                     case 7:
                         // Consulta de equipe
-                        if (!equipes.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, equipes.toString().replace("[", "").replace("]", ""));
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Não existe nenhuma equipe cadastrada.");
-                        }
+                        ConsultarEquipes();
                         break;
                     case 8:
                         // Consulta de tarefa
-                        if (!tarefas.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, tarefas.toString().replace("[", "").replace("]", ""));
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Não existe nenhuma tarefa cadastrada.");
-                        }
+                        ConsultarTarefas();
+                        break;
+                    case 9:
+                        gerenciarDados();
                         break;
                 }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Erro: Digite apenas números para a opção.");
+                Mensagem("Erro: Digite apenas números para a opção.");
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+                Mensagem("Erro inesperado: " + e.getMessage());
+            }
+        } while (opcao != 0);
+
+        // Salve todos os dados ao sair do programa para garantir que nada se perca
+        PersistenciaDados.salvarUsuarios(usuarios);
+        PersistenciaDados.salvarProjetos(projetos);
+        PersistenciaDados.salvarTarefas(tarefas);
+        PersistenciaDados.salvarEquipes(equipes);
+    }
+
+    // Método genérico para exibição de mensagens
+    private static void Mensagem(String mensagem) {
+        JOptionPane.showMessageDialog(null, mensagem);
+    }
+
+    // Novo método para gerenciar a limpeza de arquivos
+    private static void gerenciarDados() {
+        int opcao = -1;
+
+        do {
+            try {
+                String input = JOptionPane.showInputDialog(null,
+                        """
+                                -> Gerenciar Dados
+                                      1. Apagar todos os dados
+                                      2. Apagar dados dos usuários
+                                      3. Apagar dados dos projetos
+                                      4. Apagar dados dos equipes
+                                      5. Apagar dados dos tarefas
+                                    ____________________________________
+                                      0. Para voltar ao menu principal
+                                    ____________________________________
+                                    Escolha a opção desejada:""",
+                        "Gerenciamento de Dados",
+                        JOptionPane.PLAIN_MESSAGE);
+
+                if (input == null) break; // Retorna se o usuário fechar a janela
+                opcao = Integer.parseInt(input);
+
+                int confirmacao;
+
+                switch (opcao) {
+                    case 1:
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar TODOS os dados?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(
+                                    PersistenciaDados.ARQUIVO_USUARIOS,
+                                    PersistenciaDados.ARQUIVO_PROJETOS,
+                                    PersistenciaDados.ARQUIVO_EQUIPES,
+                                    PersistenciaDados.ARQUIVO_TAREFAS
+                            );
+                            usuarios.clear();
+                            projetos.clear();
+                            equipes.clear();
+                            tarefas.clear();
+                        }
+                        break;
+                    case 2:
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar os dados do Usuário?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(PersistenciaDados.ARQUIVO_USUARIOS);
+                            usuarios.clear();
+                        }
+                        break;
+                    case 3:
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar os dados do Projeto?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(PersistenciaDados.ARQUIVO_PROJETOS);
+                            projetos.clear();
+                        }
+                        break;
+                    case 4:
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar os dados da Equipe?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(PersistenciaDados.ARQUIVO_EQUIPES);
+                            equipes.clear();
+                        }
+                        break;
+                    case 5:
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar os dados da Tarefa?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(PersistenciaDados.ARQUIVO_TAREFAS);
+                            tarefas.clear();
+                        }
+                        break;
+                    case 0:
+                        // Volta para o menu principal
+                        break;
+                    default:
+                        Mensagem("Opção inválida. Por favor, escolha uma das opções acima.");
+                }
+            } catch (NumberFormatException e) {
+                Mensagem("Erro: Digite apenas números para a opção.");
+            }
+            catch (Exception e) {
+                Mensagem("Erro inesperado: " + e.getMessage());
             }
         } while (opcao != 0);
     }
 
-    //Cadastro de usuário
+    // Cadastro de usuário
     private static void CadastrarUsuario() throws ParseException {
         // Declação do JPanel a ser exibido (formulário de cadastro)
         JPanel panel = new JPanel(new GridBagLayout());
@@ -202,25 +288,25 @@ public class Main {
 
                 // Verificando se os campos foram preenchidos
                 if (nome.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O nome é obrigatório");
+                    Mensagem("O nome é obrigatório");
                 }
                 else if (cpf.isEmpty() || cpf.equals("___.___.___-__")) {
-                    JOptionPane.showMessageDialog(null, "O CPF é obrigatório");
+                    Mensagem("O CPF é obrigatório");
                 }
                 else if (email.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O e-mail é obrigatório");
+                    Mensagem("O e-mail é obrigatório");
                 }
                 else if (cargo.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O cargo é obrigatório");
+                    Mensagem("O cargo é obrigatório");
                 }
                 else if (login.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O login é obrigatório");
+                    Mensagem("O login é obrigatório");
                 }
                 else if (senha.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "A senha é obrigatório");
+                    Mensagem("A senha é obrigatório");
                 }
                 else if (perfil.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O perfil é obrigatório");
+                    Mensagem("O perfil é obrigatório");
                 }
                 else {
                     //Validando o CPF
@@ -229,25 +315,58 @@ public class Main {
                         Usuario verificaCpf = usuarios.stream().filter(u -> u.getCpf().equalsIgnoreCase(cpf)).findFirst().orElse(null);
 
                         if (verificaCpf != null) {
-                            JOptionPane.showMessageDialog(null, "Já existe um usuário cadastrado com este CPF!");
+                            Mensagem("Já existe um usuário cadastrado com este CPF!");
                         }
                         else {
                             // Inserindo o usuário
                             usuarios.add(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
 
-                            JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+                            PersistenciaDados.salvarUsuarios(usuarios);
+
+                            Mensagem("Usuário cadastrado com sucesso!");
 
                             mostrarPainel = false;
                         }
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "O CPF informado é inválido!");
+                        Mensagem("O CPF informado é inválido!");
                     }
                 }
             }
             else  {
                 mostrarPainel = false;
             }
+        }
+    }
+
+    // Consulta de usuários
+    private static void ConsultarUsuarios() {
+        if (!usuarios.isEmpty()) {
+            // Converte a lista para uma String, com quebras de linha
+            String relatorioUsuarios = usuarios.toString().replace("[", "").replace("]", "").replace(", ", "\n\n");
+
+            // Cria um JTextArea e coloca o texto nele
+            JTextArea textArea = new JTextArea(relatorioUsuarios);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            // Envolve o JTextArea em um JScrollPane
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            // Define o tamanho preferido
+            scrollPane.setPreferredSize(new Dimension(250, 400));
+
+            // Exibe o JScrollPane no JOptionPane
+            JOptionPane.showMessageDialog(
+                    null,
+                    scrollPane,
+                    "Consulta de Usuários",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        }
+        else {
+            Mensagem("Não existe nenhum usuário cadastrado.");
         }
     }
 
@@ -333,47 +452,216 @@ public class Main {
 
                 // Verificando se os campos foram preenchidos
                 if (nome.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O nome do projeto é obrigatório");
+                    Mensagem("O nome do projeto é obrigatório");
                 }
                 else if (descricao.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "A descricao é obrigatório");
+                    Mensagem("A descricao é obrigatório");
                 }
                 else if (dataInicio.isEmpty() || dataInicio.equals("__/__/____")) {
-                    JOptionPane.showMessageDialog(null, "A data de início é obrigatório");
+                    Mensagem("A data de início é obrigatório");
                 }
                 else if (dataTermino.isEmpty() || dataTermino.equals("__/__/____")) {
-                    JOptionPane.showMessageDialog(null, "A data de témino prevista é obrigatório");
+                    Mensagem("A data de témino prevista é obrigatório");
                 }
                 else if (statusSelecionado.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O status é obrigatório");
+                    Mensagem("O status é obrigatório");
                 }
                 else if (nomeGerente.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O nome do gerente responsável é obrigatório");
+                    Mensagem("O nome do gerente responsável é obrigatório");
                 }
                 else {
                     //Validando a data de início e data de término prevista
                     if (ValidarData(dataInicio) && ValidarData(dataTermino)) {
-                        Usuario gerente = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(nomeGerente)).findFirst().orElse(null);
+                        Usuario gerente = usuarios.stream().filter(u -> u.getNome().equalsIgnoreCase(nomeGerente)).findFirst().orElse(null);
 
-                        if (gerente != null && gerente.getPerfil().equalsIgnoreCase("gerente")) {
-                            // Inserindo o projeto
-                            projetos.add(new Projeto(nome, descricao, dataInicio, dataTermino, statusSelecionado, gerente));
+                        // Inserindo o projeto
+                        projetos.add(new Projeto(nome, descricao, dataInicio, dataTermino, statusSelecionado, gerente));
 
-                            JOptionPane.showMessageDialog(null, "Projeto cadastrado com sucesso!");
+                        PersistenciaDados.salvarProjetos(projetos);
 
-                            mostrarPainel = false;
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Gerente inválido! Cadastre ou selecione um usuário com perfil de GERENTE.");
-                        }
+                        Mensagem("Projeto cadastrado com sucesso!");
+
+                        mostrarPainel = false;
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "A data informada é inválida");
+                        Mensagem("A data informada é inválida");
                     }
                 }
             }
             else  {
                 mostrarPainel = false;
             }
+        }
+    }
+
+    // Consulta de projetos
+    private static void ConsultarProjetos() {
+        if (!projetos.isEmpty()) {
+            // Converte a lista para uma String, com quebras de linha
+            String relatorioProjetos = projetos.toString().replace("[", "").replace("]", "").replace(", ", "\n\n");
+
+            // Cria um JTextArea e coloca o texto nele
+            JTextArea textArea = new JTextArea(relatorioProjetos);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            // Envolve o JTextArea em um JScrollPane
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            // Define o tamanho preferido
+            scrollPane.setPreferredSize(new Dimension(250, 400));
+
+            // Exibe o JScrollPane no JOptionPane
+            JOptionPane.showMessageDialog(
+                    null,
+                    scrollPane,
+                    "Consulta de Projetos",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        }
+        else {
+            Mensagem("Não existe nenhum projeto cadastrado.");
+        }
+    }
+
+    // Cadastro de equipe
+    private static void CadastrarEquipe() {
+        // Declação do JPanel a ser exibido (formulário de cadastro)
+        JPanel panel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0);
+
+        // Posicionando os labels
+        panel.add(new JLabel("Nome da equipe:"), gbc);
+
+        gbc.gridy = 1;
+        panel.add(new JLabel("Descrição:"), gbc);
+
+        gbc.gridy = 2;
+        panel.add(new JLabel("Membro:"), gbc);
+
+        gbc.gridy = 3;
+        panel.add(new JLabel("Projeto:"), gbc);
+
+        // Posicionando os campos para digitação
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+
+        JTextField nomeTextField = new JTextField(10);
+        panel.add(nomeTextField, gbc);
+
+        gbc.gridy = 1;
+        JTextField descricaoTextField = new JTextField(10);
+        panel.add(descricaoTextField, gbc);
+
+        gbc.gridy = 2;
+        String[] usuariosCadastrados = new String[usuarios.size()+1];
+        usuariosCadastrados[0] = "";
+        for (int i = 0; i < usuarios.size(); i++) {
+            usuariosCadastrados[i+1] = usuarios.get(i).getNome();
+        }
+        JComboBox<String> listaUsuarios = new JComboBox<>(usuariosCadastrados);
+        panel.add(listaUsuarios, gbc);
+
+        gbc.gridy = 3;
+        String[] projetosCadastrados = new String[projetos.size()+1];
+        projetosCadastrados[0] = "";
+        for (int i = 0; i < projetos.size(); i++) {
+            projetosCadastrados[i+1] = projetos.get(i).getNome();
+        }
+        JComboBox<String> listaProjetos = new JComboBox<>(projetosCadastrados);
+        panel.add(listaProjetos, gbc);
+
+        // Exibindo o painel
+        boolean mostrarPainel = true;
+
+        while (mostrarPainel) {
+            int reply = JOptionPane.showConfirmDialog(null, panel, "Cadastro de equipe",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (reply == JOptionPane.OK_OPTION) {
+                //Atribuindo os valores
+                String nome = nomeTextField.getText();
+                String descricao = descricaoTextField.getText();
+                String membroSelecionado = Objects.requireNonNull(listaUsuarios.getSelectedItem()).toString();
+                String projetoSelecionado = Objects.requireNonNull(listaProjetos.getSelectedItem()).toString();
+
+                // Verificando se os campos foram preenchidos
+                if (nome.isEmpty()) {
+                    Mensagem("O nome da equipe é obrigatório");
+                }
+                else if (descricao.isEmpty()) {
+                    Mensagem("A descricao é obrigatório");
+                }
+                else if (membroSelecionado.isEmpty()) {
+                    Mensagem("O membro é obrigatório");
+                }
+                else if (projetoSelecionado.isEmpty()) {
+                    Mensagem("O projeto é obrigatório");
+                }
+                else {
+                    Usuario membro = usuarios.stream().filter(u -> u.getNome().equalsIgnoreCase(membroSelecionado)).findFirst().orElse(null);
+                    Projeto projeto = projetos.stream().filter(p -> p.getNome().equalsIgnoreCase(projetoSelecionado)).findFirst().orElse(null);
+
+                    Equipe equipeExistente = equipes.stream().filter(u -> u.getNome().equalsIgnoreCase(nome)).findFirst().orElse(null);
+
+                    if (equipeExistente != null) {
+                        // A equipe já existe, apenas adiciona o membro e o projeto a ela
+                        equipeExistente.adicionarMembro(membro);
+                        equipeExistente.adicionarProjeto(projeto);
+                        Mensagem("Membro e projeto adicionados à equipe existente!");
+                    } else {
+                        // A equipe não existe, cria uma nova
+                        Equipe novaEquipe = new Equipe(nome, descricao);
+                        novaEquipe.adicionarMembro(membro);
+                        novaEquipe.adicionarProjeto(projeto);
+                        equipes.add(novaEquipe);
+                        Mensagem("Nova equipe cadastrada com sucesso!");
+                    }
+
+                    PersistenciaDados.salvarEquipes(equipes);
+
+                    mostrarPainel = false;
+                }
+            }
+            else  {
+                mostrarPainel = false;
+            }
+        }
+    }
+
+    // Consulta de Equipes
+    private static void ConsultarEquipes() {
+        if (!equipes.isEmpty()) {
+            // Converte a lista para uma String, com quebras de linha
+            String relatorioEquipes = equipes.toString().replace("[", "").replace("]", "").replace(", ", "\n\n");
+
+            // Cria um JTextArea e coloca o texto nele
+            JTextArea textArea = new JTextArea(relatorioEquipes);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            // Envolve o JTextArea em um JScrollPane
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            // Define o tamanho preferido
+            scrollPane.setPreferredSize(new Dimension(250, 400));
+
+            // Exibe o JScrollPane no JOptionPane
+            JOptionPane.showMessageDialog(
+                    null,
+                    scrollPane,
+                    "Consulta de Equipes",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        }
+        else {
+            Mensagem("Não existe nenhuma equipe cadastrada.");
         }
     }
 
@@ -432,7 +720,7 @@ public class Main {
         String[] usuariosCadastrados = new String[usuarios.size()+1];
         usuariosCadastrados[0] = "";
         for (int i = 0; i < usuarios.size(); i++) {
-            usuariosCadastrados[i+1] = usuarios.get(i).getNomeCompleto();
+            usuariosCadastrados[i+1] = usuarios.get(i).getNome();
         }
         JComboBox<String> listaUsuarios = new JComboBox<>(usuariosCadastrados);
         panel.add(listaUsuarios, gbc);
@@ -471,155 +759,39 @@ public class Main {
 
                 // Verificando se os campos foram preenchidos
                 if (nome.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O nome da tarefa é obrigatório");
+                    Mensagem("O nome da tarefa é obrigatório");
                 }
                 else if (descricao.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "A descricao é obrigatório");
+                    Mensagem("A descrição é obrigatório");
                 }
                 else if (dataPrazo.isEmpty() || dataPrazo.equals("__/__/____")) {
-                    JOptionPane.showMessageDialog(null, "A data do prazo é obrigatório");
+                    Mensagem("A data do prazo é obrigatório");
                 }
                 else if (statusSelecionado.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O status é obrigatório");
+                    Mensagem("O status é obrigatório");
                 }
                 else if (responsavel.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O responsável é obrigatório");
+                    Mensagem("O responsável é obrigatório");
                 }
                 else if (projeto.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O projeto é obrigatório");
+                    Mensagem("O projeto é obrigatório");
                 }
                 else {
                     //Validando a data do prazo
                     if (ValidarData(dataPrazo)) {
-                        Usuario membro = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(responsavel)).findFirst().orElse(null);
+                        Usuario membro = usuarios.stream().filter(u -> u.getNome().equalsIgnoreCase(responsavel)).findFirst().orElse(null);
 
-                        if (membro != null) {
+                        // Inserindo a tarefa
+                        tarefas.add(new Tarefa(nome, descricao, membro, dataPrazo, statusSelecionado, projetoSelecionado.getFirst()));
 
-                            // Inserindo a tarefa
-                            tarefas.add(new Tarefa(nome, descricao, membro, dataPrazo, statusSelecionado, projetoSelecionado));
+                        PersistenciaDados.salvarTarefas(tarefas);
 
-                            JOptionPane.showMessageDialog(null, "Equipe cadastrada com sucesso!");
-
-                            mostrarPainel = false;
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Membro da equipe não encontrado! Cadastre este membro como um usuário primeiro.");
-                        }
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "A data informada é inválida");
-                    }
-                }
-            }
-            else  {
-                mostrarPainel = false;
-            }
-        }
-    }
-
-    // Cadastro de equipe
-    private static void CadastrarEquipe() {
-        // Declação do JPanel a ser exibido (formulário de cadastro)
-        JPanel panel = new JPanel(new GridBagLayout());
-
-        GridBagConstraints gbc = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
-                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                new Insets(2, 2, 2, 2), 0, 0);
-
-        // Posicionando os labels
-        panel.add(new JLabel("Nome da equipe:"), gbc);
-
-        gbc.gridy = 1;
-        panel.add(new JLabel("Descrição:"), gbc);
-
-        gbc.gridy = 2;
-        panel.add(new JLabel("Membro:"), gbc);
-
-        gbc.gridy = 3;
-        panel.add(new JLabel("Projeto:"), gbc);
-
-        // Posicionando os campos para digitação
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-
-        JTextField nomeTextField = new JTextField(10);
-        panel.add(nomeTextField, gbc);
-
-        gbc.gridy = 1;
-        JTextField descricaoTextField = new JTextField(10);
-        panel.add(descricaoTextField, gbc);
-
-        gbc.gridy = 2;
-        String[] usuariosCadastrados = new String[usuarios.size()+1];
-        usuariosCadastrados[0] = "";
-        for (int i = 0; i < usuarios.size(); i++) {
-            usuariosCadastrados[i+1] = usuarios.get(i).getNomeCompleto();
-        }
-        JComboBox<String> listaUsuarios = new JComboBox<>(usuariosCadastrados);
-        panel.add(listaUsuarios, gbc);
-
-        gbc.gridy = 3;
-        String[] projetosCadastrados = new String[projetos.size()+1];
-        projetosCadastrados[0] = "";
-        for (int i = 0; i < projetos.size(); i++) {
-            projetosCadastrados[i+1] = projetos.get(i).getNome();
-        }
-        JComboBox<String> listaProjetos = new JComboBox<>(projetosCadastrados);
-        panel.add(listaProjetos, gbc);
-
-        // Exibindo o painel
-        boolean mostrarPainel = true;
-
-        while (mostrarPainel) {
-            int reply = JOptionPane.showConfirmDialog(null, panel, "Cadastro de equipe",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-            if (reply == JOptionPane.OK_OPTION) {
-                //Atribuindo os valores
-                String nome = nomeTextField.getText();
-                String descricao = descricaoTextField.getText();
-                String membroEquipe = Objects.requireNonNull(listaUsuarios.getSelectedItem()).toString();
-                String projeto = Objects.requireNonNull(listaProjetos.getSelectedItem()).toString();
-
-                ArrayList<Projeto> projetoSelecionado = new ArrayList<>();
-                for (Projeto value : projetos) {
-                    if (value.getNome().equals(projeto)) {
-                        projetoSelecionado.add(value);
-                    }
-                }
-
-                // Verificando se os campos foram preenchidos
-                if (nome.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O nome da equipe é obrigatório");
-                }
-                else if (descricao.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "A descricao é obrigatório");
-                }
-                else if (membroEquipe.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O membro é obrigatório");
-                }
-                else if (projeto.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "O projeto é obrigatório");
-                }
-                else {
-                    Usuario membro = usuarios.stream().filter(u -> u.getNomeCompleto().equalsIgnoreCase(membroEquipe)).findFirst().orElse(null);
-
-                    if (membro != null) {
-                        Equipe verificaEquipe = equipes.stream().filter(u -> u.getNome().equalsIgnoreCase(nome)).findFirst().orElse(null);
-
-                        if (verificaEquipe != null) {
-                            // Inserindo o membro na mesma equipe
-                            equipes.add(new Equipe(verificaEquipe.getNome(), verificaEquipe.getDescricao(), membro, projetoSelecionado));
-                        } else {
-                            // Inserindo a equipe
-                            equipes.add(new Equipe(nome, descricao, membro, projetoSelecionado));
-                        }
-
-                        JOptionPane.showMessageDialog(null, "Equipe cadastrada com sucesso!");
+                        Mensagem("Tarefa cadastrada com sucesso!");
 
                         mostrarPainel = false;
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Membro da equipe não encontrado! Cadastre este membro como um usuário primeiro.");
+                    }
+                    else {
+                        Mensagem("A data informada é inválida");
                     }
                 }
             }
@@ -629,7 +801,38 @@ public class Main {
         }
     }
 
-    // Extrai/retorna um arrar de string com somente os perfis iguais a "gerente"
+    // Consulta de Tarefas
+    private static void ConsultarTarefas() {
+        if (!tarefas.isEmpty()) {
+            // Converte a lista para uma String, com quebras de linha
+            String relatorioTarefas = tarefas.toString().replace("[", "").replace("]", "").replace(", ", "\n\n");
+
+            // Cria um JTextArea e coloca o texto nele
+            JTextArea textArea = new JTextArea(relatorioTarefas);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            // Envolve o JTextArea em um JScrollPane
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            // Define o tamanho preferido
+            scrollPane.setPreferredSize(new Dimension(250, 400));
+
+            // Exibe o JScrollPane no JOptionPane
+            JOptionPane.showMessageDialog(
+                    null,
+                    scrollPane,
+                    "Consulta de Tarefas",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        }
+        else {
+            Mensagem("Não existe nenhuma tarefa cadastrada.");
+        }
+    }
+
+    // Extrai/retorna um array de String com somente os perfis iguais a "Gerente"
     public static String[] extrairGerentes(List<Usuario> usuarios) {
         // Usa uma lista para armazenar os nomes dos gerentes
         List<String> gerentesEncontrados = new ArrayList<>();
@@ -642,7 +845,7 @@ public class Main {
             // Verifica o perfil do usuário
             if (usuario.getPerfil().equals("Gerente")) {
                 // Adiciona o nome à lista apenas se o perfil for Gerente
-                gerentesEncontrados.add(usuario.getNomeCompleto());
+                gerentesEncontrados.add(usuario.getNome());
             }
         }
 
@@ -678,11 +881,8 @@ public class Main {
 
             // Calcula e valida o segundo dígito verificador
             int digito2 = calcularDigito(cpf.substring(0, 10));
-            if (digito2 != Character.getNumericValue(cpf.charAt(10))) {
-                return false;
-            }
 
-            return true;
+            return digito2 == Character.getNumericValue(cpf.charAt(10));
         } catch (NumberFormatException e) {
             // Caso a string não seja um número válido
             return false;
