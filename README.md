@@ -1,83 +1,89 @@
-# Sistema de Gestão de Projetos e Equipes
+# Sistema de Gestão de Projetos Educacional
+
+---
 
 ## Descrição
-O **CadastroGestaoProjetos** é um sistema desenvolvido em **Java** para gerenciar de forma completa projetos, equipes e usuários dentro de uma organização. Ele permite:
+O **Sistema de Gestão de Projetos Educacional** é um sistema desenvolvido em **Java** para gerenciar projetos, equipes, usuários e tarefas.
 
-- Cadastro de usuários com informações como nome, CPF, e-mail, cargo, login, senha e perfil (administrador, gerente, colaborador);
-- Cadastro de projetos com informações como nome, descrição, datas de início, data de término prevista, status (planejado, em andamento, concluído, cancelado) e gerente responsável;
-- Cadastro de equipes com informações como nome, descrição, membros e projeto associado;
-- Cadastro de tarefas com informações como nome, descrição, prazo, status (pendente, em andamento e concluída), responsável e projeto associado;
-- Emissão de relatórios simples (consultas) dos cadastros (usuário, projeto, equipe e tarefa).
+O sistema permite a realização de cadastros, consultas e a gestão de dados de forma simples e intuitiva através de uma interface gráfica (Java Swing).
 
-O sistema foi desenvolvido como um projeto acadêmico, mas já implementa conceitos de orientação a objetos e boas práticas de organização de código.
+O sistema foi desenvolvido como um projeto acadêmico, utiliza os princípios da **Programação Orientada a Objetos (POO)**, implementa a **persistência de dados** através de arquivos binários (.dat) para garantir que as informações sejam salvas e carregadas a cada execução e boas práticas de organização de código.
 
 ---
 
 ## Estrutura do Projeto
+```plaintext
 CadastroGestaoProjetos/
 │
 ├─ src/ # Código-fonte em Java
-│ ├─ Usuario.java
-│ ├─ Projeto.java
 │ ├─ Equipe.java
+│ ├─ Main.java
+│ ├─ PersistenciaDados.java
+│ ├─ Pessoa.java
+│ ├─ Projeto.java
 │ ├─ Tarefa.java
-│ └─ Main.java
+│ └─ Usuario.java
+│
 ├─ README.md # Arquivo de apresentação do projeto
 ├─ .gitignore # Arquivos ignorados pelo Git
 └─ LICENSE # Licença do projeto
-
+```
 ---
 
 ## Funcionalidades
+O sistema oferece as seguintes funcionalidades, acessíveis através de um menu principal:
 
-1. **Cadastro de Usuários**
-   - Nome completo, CPF, e-mail, cargo, login, senha
-   - Perfil: administrador, gerente ou colaborador
+### **Cadastros**
+1. **Usuários**
+    * Cadastro de usuários com nome, CPF, e-mail, cargo, login, senha e perfil (Administrador, Gerente ou Colaborador).
+2. **Projetos**
+    * Cadastro de projetos com nome, descrição, datas de início e término, status (Planejado, Em Andamento, Concluído, Cancelado) e gerente responsável.
+3. **Equipes**
+    * Cadastro de equipes com nome, descrição, múltiplos membros e múltiplos projetos associados.
+4. **Tarefas**
+    * Cadastro de tarefas com nome, descrição, prazo, status (Pendente, Em Andamento, Concluída), responsável e projeto associado.
 
-2. **Cadastro de Projetos**
-   - Nome do projeto, descrição, data de início, data de término prevista
-   - Status: planejado, em andamento, concluído, cancelado
-   - Gerente responsável
+### **Consultas**
+* Visualização detalhada de todos os usuários, projetos, equipes e tarefas cadastradas.
 
-3. **Cadastro de Equipes**
-   - Nome da equipe, descrição, membros e projeto associado
-   - Equipes podem atuar em vários projetos
-  
-4. **Cadastro de Tarefas**
-   - Nome da tarefa, descrição, prazo, status, responsável e projeto associado
-   - Equipes podem atuar em vários projetos
+### **Administração**
+* **Gerenciar Dados**: Opção para apagar todos os dados ou dados de cadastros específicos (usuários, projetos, equipes ou tarefas).
 
 ---
 
 ## Tecnologias Utilizadas
 
-- Linguagem: **Java**
-- Estrutura: **POO (Programação Orientada a Objetos)**
-- Gerenciamento de versões: **Git e GitHub**
-- Interface simples via **JOptionPane, JPanel, JLabel e JTextField** para cadastro de usuários
+* **Linguagem:** Java
+* **Estrutura:** Programação Orientada a Objetos (POO)
+* **Interface Gráfica:** `JOptionPane` e `JPanel` para formulários de entrada e exibição de dados.
+* **Persistência de Dados:** Serialização de objetos em arquivos `.dat`.
+* **Controle de Versão:** Git e GitHub.
 
 ---
 
 ## Como Executar
 
-1. Clone o repositório:
-```bash
-git clone https://github.com/trabalhoanhembi/CadastroGestaoProjetos.git
-Entre na pasta do projeto:
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/trabalhoanhembi/CadastroGestaoProjetos.git](https://github.com/trabalhoanhembi/CadastroGestaoProjetos.git)
+    ```
 
-cd CadastroGestaoProjetos/src
+2.  **Acesse o diretório do código-fonte:**
+    ```bash
+    cd CadastroGestaoProjetos/src
+    ```
 
-Compile e execute o sistema:
+3.  **Compile e execute o sistema:**
+    ```bash
+    javac *.java
+    java Main
+    ```
+---
 
-javac *.java
-java SistemaGestaoProjetos
-
-Autor
-
-LUCAS BRAGA TEIXEIRA, MARCIO UNE SUGUIURA, IVANESSA OLIVEIRA CHAGAS E MARCOS VINICIUS TEIXEIRA PINTO
-
-Email: trabalhoA3uam2025@gmail.com
-
-GitHub: trabalhoanhembi
-
-
+## Autores
+* LUCAS BRAGA TEIXEIRA
+* MARCIO UNE SUGUIURA
+* IVANESSA OLIVEIRA CHAGAS
+* MARCOS VINICIUS TEIXEIRA PINTO
+* **E-mail:** trabalhoA3uam2025@gmail.com
+* **GitHub:** [trabalhoanhembi](https://github.com/trabalhoanhembi)
