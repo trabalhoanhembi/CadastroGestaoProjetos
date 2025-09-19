@@ -2,10 +2,10 @@
 import java.io.Serializable;
 
 public class Pessoa implements Serializable {
-    // Atributos principais da clase Pessoa
-    private String nome;
-    private String cpf;
-    private String email;
+    // Atributos principais da classe Pessoa
+    private String nome;    // Nome da pessoa
+    private String cpf;     // CPF da pessoa
+    private String email;   // E-mail da pessoa
 
     // Construtor Padrão (Necessário para serialização)
     public Pessoa() {}
@@ -17,16 +17,26 @@ public class Pessoa implements Serializable {
         this.email = email;
     }
 
-    // Métodos getters para acessar os dados
-    public String getNome() {
-        return nome;
-    }
+    // Métodos setters
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getCpf() {
-        return cpf;
-    }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
-    public String getEmail() {
-        return email;
+    public void setEmail(String email) { this.email = email; }
+
+    // Métodos getters
+    public String getNome() { return nome; }
+
+    public String getCpf() { return cpf; }
+
+    public String getEmail() { return email; }
+
+    // Sobrescreve o método equals() para comparar objetos por conteúdo e não por referência de memória
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pessoa pessoa = (Pessoa) o;
+        return nome.equals(pessoa.nome);
     }
 }
