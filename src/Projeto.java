@@ -1,8 +1,8 @@
 // Importa as classes necessárias
 import java.io.Serializable;
 
-class Projeto implements Serializable {
-    // Atributos principais da clase Projeto
+public class Projeto implements Serializable {
+    // Atributos principais da classe Projeto
     private String nome;                // Nome do projeto
     private String descricao;           // Descrição do projeto
     private String dataInicio;          // Data de início do projeto
@@ -23,12 +23,30 @@ class Projeto implements Serializable {
         this.gerenteResponsavel = gerenteResponsavel;   // Inicializa com o gerente responsável pelo projeto
     }
 
-    // Métodos getters para acessar os dados
+    // Métodos setters
+    public void setNome(String nome) { this.nome = nome; }
+
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public void setDataInicio(String dataInicio) { this.dataInicio = dataInicio; }
+
+    public void setDataTerminoPrevista(String dataTerminoPrevista) { this.dataTerminoPrevista = dataTerminoPrevista; }
+
+    public void setStatus(String status) { this.status = status; }
+
+    public void setGerenteResponsavel(Usuario gerenteResponsavel) { this.gerenteResponsavel = gerenteResponsavel; }
+
+    // Métodos getters
     public String getNome() { return nome; }
+
     public String getDescricao() { return descricao; }
+
     public String getDataInicio() { return dataInicio; }
+
     public String getDataTerminoPrevista() { return dataTerminoPrevista; }
+
     public String getStatus() { return status; }
+
     public String getGerenteResponsavel() { return gerenteResponsavel.getNome(); }
 
     // Sobrescreve o método toString() para mostrar os dados do projeto
