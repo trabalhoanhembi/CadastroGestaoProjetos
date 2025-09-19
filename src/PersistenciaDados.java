@@ -1,3 +1,4 @@
+// Importa as classes necessárias
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,20 +37,52 @@ public class PersistenciaDados {
     }
 
     // Métodos de carregar
+    @SuppressWarnings("unchecked")
+    // Foi incluído essa supressão para retirar o aviso "Unchecked cast: 'java.lang.Object' to 'java.util.List<Usuario>'"
+    // O compilador do Java alerta sobre uma conversão de tipo que ele não pode verificar em tempo de compilação
+    // Ele sabe que o objeto que ele leu do arquivo é um Object, mas ele não consegue garantir que esse Object seja de fato uma List<Usuario>
     public static List<Usuario> carregarUsuarios() {
-        return (List<Usuario>) carregar(ARQUIVO_USUARIOS);
+        Object obj = carregar(ARQUIVO_USUARIOS);
+        if (obj instanceof List<?> list && !list.isEmpty() && list.getFirst() instanceof Usuario) {
+            return (List<Usuario>) obj;
+        }
+        return new ArrayList<>();
     }
 
+    @SuppressWarnings("unchecked")
+    // Foi incluído essa supressão para retirar o aviso "Unchecked cast: 'java.lang.Object' to 'java.util.List<Projeto>'"
+    // O compilador do Java alerta sobre uma conversão de tipo que ele não pode verificar em tempo de compilação
+    // Ele sabe que o objeto que ele leu do arquivo é um Object, mas ele não consegue garantir que esse Object seja de fato uma List<Projeto>
     public static List<Projeto> carregarProjetos() {
-        return (List<Projeto>) carregar(ARQUIVO_PROJETOS);
+        Object obj = carregar(ARQUIVO_PROJETOS);
+        if (obj instanceof List<?> list && !list.isEmpty() && list.getFirst() instanceof Projeto) {
+            return (List<Projeto>) obj;
+        }
+        return new ArrayList<>();
     }
 
+    @SuppressWarnings("unchecked")
+    // Foi incluído essa supressão para retirar o aviso "Unchecked cast: 'java.lang.Object' to 'java.util.List<Tarefa>'"
+    // O compilador do Java alerta sobre uma conversão de tipo que ele não pode verificar em tempo de compilação
+    // Ele sabe que o objeto que ele leu do arquivo é um Object, mas ele não consegue garantir que esse Object seja de fato uma List<Tarefa>
     public static List<Tarefa> carregarTarefas() {
-        return (List<Tarefa>) carregar(ARQUIVO_TAREFAS);
+        Object obj = carregar(ARQUIVO_TAREFAS);
+        if (obj instanceof List<?> list && !list.isEmpty() && list.getFirst() instanceof Tarefa) {
+            return (List<Tarefa>) obj;
+        }
+        return new ArrayList<>();
     }
 
+    @SuppressWarnings("unchecked")
+    // Foi incluído essa supressão para retirar o aviso "Unchecked cast: 'java.lang.Object' to 'java.util.List<Equipe>'"
+    // O compilador do Java alerta sobre uma conversão de tipo que ele não pode verificar em tempo de compilação
+    // Ele sabe que o objeto que ele leu do arquivo é um Object, mas ele não consegue garantir que esse Object seja de fato uma List<Equipe>
     public static List<Equipe> carregarEquipes() {
-        return (List<Equipe>) carregar(ARQUIVO_EQUIPES);
+        Object obj = carregar(ARQUIVO_EQUIPES);
+        if (obj instanceof List<?> list && !list.isEmpty() && list.getFirst() instanceof Equipe) {
+            return (List<Equipe>) obj;
+        }
+        return new ArrayList<>();
     }
 
     // Método genérico para carregar qualquer lista
