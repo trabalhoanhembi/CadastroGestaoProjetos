@@ -1363,33 +1363,24 @@ public class Main {
 
                 switch (opcao) {
                     case 1:
-                        boolean temAssociacaoTotal =
-                                usuarios.stream().anyMatch(u -> tarefas.stream().anyMatch(t -> t.getResponsavel().equals(u.getNome())) ||
-                                        projetos.stream().anyMatch(p -> p.getGerenteResponsavel().equals(u.getNome())) ||
-                                        equipes.stream().anyMatch(e -> e.getMembros().stream().anyMatch(m -> m.getNome().equals(u.getNome())))) ||
-                                        projetos.stream().anyMatch(p -> tarefas.stream().anyMatch(t -> t.getProjetos().equals(p.getNome())) ||
-                                                equipes.stream().anyMatch(e -> e.getProjetos().stream().anyMatch(ep -> ep.getNome().equals(p.getNome()))));
-                        if (temAssociacaoTotal) {
-                            mensagem("Não é possível apagar todos os dados, pois existem associações entre projetos, equipes e tarefas.");
-                        }
-                        else {
-                            confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar TODOS os dados?", "Confirmação", JOptionPane.YES_NO_OPTION);
-                            if (confirmacao == JOptionPane.YES_OPTION) {
-                                PersistenciaDados.limparDados(
-                                        PersistenciaDados.ARQUIVO_USUARIOS,
-                                        PersistenciaDados.ARQUIVO_PROJETOS,
-                                        PersistenciaDados.ARQUIVO_EQUIPES,
-                                        PersistenciaDados.ARQUIVO_TAREFAS
-                                );
-                                usuarios.clear();
-                                projetos.clear();
-                                equipes.clear();
-                                tarefas.clear();
-                                mensagem("Todos os dados foram apagados com sucesso.");
-                            }
+                        // Apagar todos os dados
+                        confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar TODOS os dados?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        if (confirmacao == JOptionPane.YES_OPTION) {
+                            PersistenciaDados.limparDados(
+                                    PersistenciaDados.ARQUIVO_USUARIOS,
+                                    PersistenciaDados.ARQUIVO_PROJETOS,
+                                    PersistenciaDados.ARQUIVO_EQUIPES,
+                                    PersistenciaDados.ARQUIVO_TAREFAS
+                            );
+                            usuarios.clear();
+                            projetos.clear();
+                            equipes.clear();
+                            tarefas.clear();
+                            mensagem("Todos os dados foram apagados com sucesso.");
                         }
                         break;
                     case 2:
+                        // Apagar dados dos usuários
                         boolean usuarioTemAssociacao = usuarios.stream().anyMatch(usuario ->
                                 tarefas.stream().anyMatch(t -> t.getResponsavel().equals(usuario.getNome())) ||
                                         projetos.stream().anyMatch(p -> p.getGerenteResponsavel().equals(usuario.getNome())) ||
@@ -1408,6 +1399,7 @@ public class Main {
                         }
                         break;
                     case 3:
+                        // Apagar dados dos projetos
                         boolean projetoTemAssociacao = projetos.stream().anyMatch(projeto ->
                                 tarefas.stream().anyMatch(t -> t.getProjetos().equals(projeto.getNome())) ||
                                         equipes.stream().anyMatch(e -> e.getProjetos().stream().anyMatch(ep -> ep.getNome().equals(projeto.getNome())))
@@ -1425,6 +1417,7 @@ public class Main {
                         }
                         break;
                     case 4:
+                        // Apagar dados dos equipes
                         boolean equipeTemAssociacao = equipes.stream().anyMatch(equipe ->
                                 tarefas.stream().anyMatch(t -> t.getProjetos().equals(equipe.getProjetos().stream().findFirst().map(Projeto::getNome).orElse("")))
                         );
@@ -1441,6 +1434,7 @@ public class Main {
                         }
                         break;
                     case 5:
+                        // Apagar dados dos tarefas
                         confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja apagar os dados da Tarefa?", "Confirmação", JOptionPane.YES_NO_OPTION);
                         if (confirmacao == JOptionPane.YES_OPTION) {
                             PersistenciaDados.limparDados(PersistenciaDados.ARQUIVO_TAREFAS);
